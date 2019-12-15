@@ -1,0 +1,60 @@
+#Port 22
+#AddressFamily any
+#ListenAddress 0.0.0.0
+#ListenAddress ::
+Protocol 2
+HostKey /etc/ssh/ssh_host_ecdsa_key
+HostKey /etc/ssh/ssh_host_rsa_key
+SyslogFacility AUTHPRIV
+# LogLevel INFO
+LogLevel VERBOSE
+MaxAuthTries 3
+MaxSessions 2
+AuthorizedKeysFile .ssh/authorized_keys
+PasswordAuthentication no
+PermitRootLogin no
+ChallengeResponseAuthentication no
+GSSAPIAuthentication yes
+GSSAPICleanupCredentials no
+UsePAM yes
+#AllowAgentForwarding yes
+AllowTcpForwarding no
+#GatewayPorts no
+X11Forwarding no
+#X11DisplayOffset 10
+#X11UseLocalhost yes
+#PermitTTY yes
+#PrintMotd yes
+#PrintLastLog yes
+TCPKeepAlive no
+#UseLogin no
+UsePrivilegeSeparation sandbox		# Default for new installations.
+#PermitUserEnvironment no
+Compression no
+#ClientAliveInterval 0
+ClientAliveCountMax 2
+#ShowPatchLevel no
+UseDNS no
+#PidFile /var/run/sshd.pid
+#MaxStartups 10:30:100
+#PermitTunnel no
+#ChrootDirectory none
+#VersionAddendum none
+# no default banner path
+#Banner none
+# Accept locale-related environment variables
+AcceptEnv LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
+AcceptEnv LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
+AcceptEnv LC_IDENTIFICATION LC_ALL LANGUAGE
+AcceptEnv XMODIFIERS
+# override default of no subsystems
+Subsystem sftp	/usr/libexec/openssh/sftp-server
+AllowGroups ssh-users
+KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group18-sha512,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512
+Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
+MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256
+Match Group ssh-users
+    AllowTcpForwarding yes
+    X11Forwarding yes
+    ClientAliveCountMax 5
+    MaxSessions 10
