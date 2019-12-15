@@ -1,0 +1,16 @@
+name: Docker Image CI
+
+on: [push]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: validate-license-action
+      uses: datreeio/validate-license-action@v1.0.0
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag fzarifian/docker-x2go:$(date +%s)
