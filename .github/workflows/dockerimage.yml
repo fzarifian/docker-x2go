@@ -1,0 +1,23 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  github_login:
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Authenticate to github packages
+      run: docker login -u fzarifian -p ${{ secrets.GITHUB_TOKEN }} docker.pkg.github.com
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag fzarifian/x2go:canary
+    - name: Push to github packages
+      run: |
+        docker tag fzarifian/x2go:canary docker.pkg.github.com/fzarifian/docker-x2go/centos:canary
+        docker push docker.pkg.github.com/fzarifian/docker-x2go/centos:canary
