@@ -6,17 +6,18 @@ on:
       - master
 
 jobs:
-  github_login:
-    runs-on: ubuntu-18.04
-    steps:
-    - name: Authenticate to github packages
-      run: docker login -u fzarifian -p ${{ secrets.GITHUB_TOKEN }} docker.pkg.github.com
   build:
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v1
+    - name: Authenticate to docker hub
+      run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }}
+    - name: Authenticate to github packages
+      run: docker login -u fzarifian -p ${{ secrets.GITHUB_TOKEN }} docker.pkg.github.com
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag fzarifian/x2go:canary
+    - name: Push to dockerhub
+      run: docker push fzarifian/x2go:canary
     - name: Push to github packages
       run: |
         docker tag fzarifian/x2go:canary docker.pkg.github.com/fzarifian/docker-x2go/centos:canary
