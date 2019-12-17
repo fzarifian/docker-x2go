@@ -1,2 +1,3 @@
 # docker-x2go 
-![](https://github.com/fzarifian/docker-x2go/workflows/.github/workflows/dockerimage.yml/badge.svg)
+
+![](https://github.com/fzarifian/docker-x2go/workflows/Docker%20Image%20CI/badge.svg)
