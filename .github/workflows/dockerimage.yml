@@ -20,7 +20,9 @@ jobs:
       run: docker build . --file Dockerfile --tag fzarifian/x2go:canary
     - name: Push to dockerhub
       run: docker push fzarifian/x2go:canary
+      if: github.event_name != 'pull_request'
     - name: Push to github packages
       run: |
         docker tag fzarifian/x2go:canary docker.pkg.github.com/fzarifian/docker-x2go/centos:canary
         docker push docker.pkg.github.com/fzarifian/docker-x2go/centos:canary
+      if: github.event_name != 'pull_request'
