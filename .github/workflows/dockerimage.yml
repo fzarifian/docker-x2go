@@ -11,18 +11,25 @@ jobs:
   build:
     runs-on: ubuntu-18.04
     steps:
-    - uses: actions/checkout@v1
-    - name: Authenticate to docker hub
-      run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }}
-    - name: Authenticate to github packages
-      run: docker login -u fzarifian -p ${{ secrets.GITHUB_TOKEN }} docker.pkg.github.com
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag fzarifian/x2go:canary
-    - name: Push to dockerhub
-      run: docker push fzarifian/x2go:canary
-      if: github.event_name != 'pull_request'
-    - name: Push to github packages
-      run: |
-        docker tag fzarifian/x2go:canary docker.pkg.github.com/fzarifian/docker-x2go/centos:canary
-        docker push docker.pkg.github.com/fzarifian/docker-x2go/centos:canary
-      if: github.event_name != 'pull_request'
+      - uses: actions/checkout@v1
+
+      - name: Authenticate to docker hub
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }}
+        if: github.event_name != 'pull_request'
+
+      - name: Authenticate to github packages
+        run: docker login -u fzarifian -p ${{ secrets.GITHUB_TOKEN }} docker.pkg.github.com
+        if: github.event_name != 'pull_request'
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag fzarifian/x2go:${{ github.ref }}
+        
+      - name: Push to dockerhub
+        run: docker push fzarifian/x2go:${{ github.ref }}
+        if: github.event_name != 'pull_request'
+        
+      - name: Push to github packages
+        run: |
+          docker tag fzarifian/x2go:${{ github.ref }} docker.pkg.github.com/fzarifian/docker-x2go/centos:${{ github.ref }}
+          docker push docker.pkg.github.com/fzarifian/docker-x2go/centos:${{ github.ref }}
+        if: github.event_name != 'pull_request'
