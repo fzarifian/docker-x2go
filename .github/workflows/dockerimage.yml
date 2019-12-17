@@ -4,20 +4,34 @@ on:
   push:
     branches:
       - master
-
+  pull_request:
+    branches:
+      - master
 jobs:
-  github_login:
-    runs-on: ubuntu-18.04
-    steps:
-    - name: Authenticate to github packages
-      run: docker login -u fzarifian -p ${{ secrets.GITHUB_TOKEN }} docker.pkg.github.com
   build:
     runs-on: ubuntu-18.04
     steps:
-    - uses: actions/checkout@v1
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag fzarifian/x2go:canary
-    - name: Push to github packages
-      run: |
-        docker tag fzarifian/x2go:canary docker.pkg.github.com/fzarifian/docker-x2go/centos:canary
-        docker push docker.pkg.github.com/fzarifian/docker-x2go/centos:canary
+      - uses: actions/checkout@v1
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag fzarifian/x2go:build
+
+      - name: Authenticate to docker hub
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }}
+        if: github.event_name == 'push'
+        
+      - name: Push to docker hub
+        run: |
+          docker tag fzarifian/x2go:build fzarifian/x2go:latest 
+          docker push fzarifian/x2go:latest
+        if: github.event_name == 'push'
+
+      - name: Authenticate to github packages
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.GITHUB_TOKEN }} docker.pkg.github.com
+        if: github.event_name == 'push'
+  
+      - name: Push to github packages
+        run: |
+          docker tag fzarifian/x2go:build docker.pkg.github.com/fzarifian/docker-x2go/centos:latest
+          docker push docker.pkg.github.com/fzarifian/docker-x2go/centos:latest
+        if: github.event_name == 'push'
