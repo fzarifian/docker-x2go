@@ -16,6 +16,16 @@ jobs:
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag fzarifian/x2go:build
 
+      - name: Authenticate to quay.io
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }} quay.io
+        if: github.event_name == 'push'
+
+      - name: Push to quay.io
+        run: |
+          docker tag fzarifian/x2go:build quay.io/fzarifian/x2go:latest
+          docker push quay.io/fzarifian/x2go:latest
+        if: github.event_name == 'push'
+        
       - name: Authenticate to docker hub
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }}
         if: github.event_name == 'push'
