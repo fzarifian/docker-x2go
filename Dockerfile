@@ -1,11 +1,21 @@
-FROM krallin/centos-tini:7
+FROM centos:7 AS dependencies-stage
+ENV TINI_VERSION v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini.asc /tini.asc
+RUN gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 595E85A6B1B4779EA4DAAEC70B588DFF0527A9B7 \
+ && gpg --batch --verify /tini.asc /tini
+
+
+FROM centos:7 AS build-stage
 LABEL maintainer="fabien.zarifian@nuevolia.fr"
 ENV X2GO_ADMIN_USER admin
+
+COPY --from=dependencies-stage /tini /usr/local/bin/tini
 
 EXPOSE 22
 
 # Install
-RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
+RUN yum install -y yum-utils epel-release \
     && rpm --import https://packages.cisofy.com/keys/cisofy-software-rpms-public.key \
     && yum-config-manager --add-repo 'https://packages.cisofy.com/community/lynis/rpm' \
     && rpm --import https://packages.microsoft.com/keys/microsoft.asc \
