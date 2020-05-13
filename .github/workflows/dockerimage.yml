@@ -14,19 +14,12 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-  build:
-    runs-on: ubuntu-18.04
-    steps:
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag fzarifian/x2go:build
 
-  distribution:
-    runs-on: ubuntu-18.04
-    steps:
       - name: Authenticate to quay.io
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }} quay.io
         if: github.event_name == 'push'
-
       - name: Push to quay.io
         run: |
           docker tag fzarifian/x2go:build quay.io/fzarifian/x2go:latest
@@ -35,8 +28,7 @@ jobs:
         
       - name: Authenticate to docker hub
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }}
-        if: github.event_name == 'push'
-        
+        if: github.event_name == 'push'        
       - name: Push to docker hub
         run: |
           docker tag fzarifian/x2go:build fzarifian/x2go:latest 
@@ -46,7 +38,6 @@ jobs:
       - name: Authenticate to github packages
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.GITHUB_TOKEN }} docker.pkg.github.com
         if: github.event_name == 'push'
-  
       - name: Push to github packages
         run: |
           docker tag fzarifian/x2go:build docker.pkg.github.com/fzarifian/docker-x2go/centos:latest
