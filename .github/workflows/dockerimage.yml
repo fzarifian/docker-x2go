@@ -9,23 +9,46 @@ on:
       - master
 
 jobs:
-  push_to_registries:
-    name: Push Docker image to registries
+  checkout:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2
-      - name: Push to Docker Hub
-        uses: docker/build-push-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_PASS }}
-          repository: fzarifian/x2go
-          tag_with_ref: true
-      - name: Push to GitHub Packages
-        uses: docker/build-push-action@v1
-        with:
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          registry: docker.pkg.github.com
-          repository: fzarifian/docker-x2go/centos
-          tag_with_ref: true
+      - uses: actions/checkout@v1
+
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag fzarifian/x2go:build
+
+  distribution:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Authenticate to quay.io
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }} quay.io
+        if: github.event_name == 'push'
+
+      - name: Push to quay.io
+        run: |
+          docker tag fzarifian/x2go:build quay.io/fzarifian/x2go:latest
+          docker push quay.io/fzarifian/x2go:latest
+        if: github.event_name == 'push'
+        
+      - name: Authenticate to docker hub
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }}
+        if: github.event_name == 'push'
+        
+      - name: Push to docker hub
+        run: |
+          docker tag fzarifian/x2go:build fzarifian/x2go:latest 
+          docker push fzarifian/x2go:latest
+        if: github.event_name == 'push'
+
+      - name: Authenticate to github packages
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.GITHUB_TOKEN }} docker.pkg.github.com
+        if: github.event_name == 'push'
+  
+      - name: Push to github packages
+        run: |
+          docker tag fzarifian/x2go:build docker.pkg.github.com/fzarifian/docker-x2go/centos:latest
+          docker push docker.pkg.github.com/fzarifian/docker-x2go/centos:latest
+        if: github.event_name == 'push'
