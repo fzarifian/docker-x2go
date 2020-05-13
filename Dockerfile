@@ -20,6 +20,7 @@ RUN yum install -y yum-utils epel-release \
     && yum-config-manager --add-repo 'https://packages.cisofy.com/community/lynis/rpm' \
     && rpm --import https://packages.microsoft.com/keys/microsoft.asc \
     && yum-config-manager --add-repo 'https://packages.microsoft.com/yumrepos/vscode' \
+    && yum -y update \
     && yum install -y \
         "@mate-desktop" \
         google-droid-sans-fonts \
