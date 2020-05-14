@@ -22,17 +22,15 @@ RUN yum install -y yum-utils epel-release deltarpm \
     && rpm --import https://packages.microsoft.com/keys/microsoft.asc \
     && yum-config-manager --add-repo 'https://packages.microsoft.com/yumrepos/vscode' \
     && rm -f /var/cache/yum/timedhosts.txt \
-    && yum update -y --obsoletes \
-    && yum install -y \
-        "@mate-desktop" \
-        google-droid-sans-fonts \
-        google-droid-sans-mono-fonts \
-        google-noto-sans-fonts \
-        roboto-fontface-fonts \
-        oxygen-fonts \
+    && yum update -y --obsoletes
+
+RUN yum install -y \
+        mate-desktop mate-panel mate-applets mate-menus mate-common mate-control-center mate-utils \
+        mate-backgrounds mate-themes mate-themes-extra mate-icon-theme mate-icon-theme-faenza  \
+        google-droid-sans-fonts google-droid-sans-mono-fonts google-noto-sans-fonts \
+        roboto-fontface-fonts oxygen-fonts \
         x2goserver \
-        git \
-        code \
+        git code \
         unzip \
         sudo \
         rsync \
