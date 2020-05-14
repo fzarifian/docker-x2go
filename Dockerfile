@@ -16,12 +16,13 @@ EXPOSE 22
 
 # Install
 RUN yum install -y yum-utils epel-release deltarpm \
+    && yum clean all \
     && rpm --import https://packages.cisofy.com/keys/cisofy-software-rpms-public.key \
     && yum-config-manager --add-repo 'https://packages.cisofy.com/community/lynis/rpm' \
     && rpm --import https://packages.microsoft.com/keys/microsoft.asc \
     && yum-config-manager --add-repo 'https://packages.microsoft.com/yumrepos/vscode' \
     && rm -f /var/cache/yum/timedhosts.txt \
-    && yum -y --obsoletes update \
+    && yum update -y --obsoletes \
     && yum install -y \
         "@mate-desktop" \
         google-droid-sans-fonts \
