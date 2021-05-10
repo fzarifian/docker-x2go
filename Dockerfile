@@ -15,7 +15,7 @@ COPY --from=dependencies-stage /tini /usr/local/bin/tini
 EXPOSE 22
 
 # Install
-RUN yum install -y yum-utils epel-release deltarpm \
+RUN yum install -y yum-utils epel-release \
     && yum clean all \
     && rpm --import https://packages.cisofy.com/keys/cisofy-software-rpms-public.key \
     && yum-config-manager --add-repo 'https://packages.cisofy.com/community/lynis/rpm' \
