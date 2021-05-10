@@ -1,4 +1,4 @@
-FROM centos:7 AS dependencies-stage
+FROM centos:8 AS dependencies-stage
 ENV TINI_VERSION v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini.asc /tini.asc
@@ -6,7 +6,7 @@ RUN gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 595
     && gpg --batch --verify /tini.asc /tini \
     && chmod +x /tini
 
-FROM centos:7 AS build-stage
+FROM centos:8 AS build-stage
 LABEL maintainer="fabien.zarifian@nuevolia.fr"
 ENV X2GO_ADMIN_USER admin
 
@@ -15,7 +15,7 @@ COPY --from=dependencies-stage /tini /usr/local/bin/tini
 EXPOSE 22
 
 # Install
-RUN yum install -y yum-utils epel-release deltarpm \
+RUN yum install -y yum-utils epel-release \
     && yum clean all \
     && rpm --import https://packages.cisofy.com/keys/cisofy-software-rpms-public.key \
     && yum-config-manager --add-repo 'https://packages.cisofy.com/community/lynis/rpm' \
