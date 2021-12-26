@@ -39,6 +39,8 @@ RUN yum install -y \
         sudo \
         rsync \
         sysstat \
+        kernel-headers-0:4.14.0-49.13.1.el7a \
+        kernel-tools-libs-0:4.14.0-49.13.1.el7a \
     && yum clean all
 
 # Configure
