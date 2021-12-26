@@ -28,7 +28,7 @@ RUN yum install -y yum-utils epel-release deltarpm \
     && rm -f /var/cache/yum/timedhosts.txt \
     && yum update -y --obsoletes
 
-RUN yum install -y \
+RUN yum install -x kernel-tools-libs,kernel-headers -y \
         mate-desktop mate-panel mate-applets mate-menus mate-common mate-control-center mate-utils \
         mate-backgrounds mate-themes mate-themes-extra mate-icon-theme mate-icon-theme-faenza  \
         google-droid-sans-fonts google-droid-sans-mono-fonts google-noto-sans-fonts \
