@@ -1,4 +1,4 @@
-FROM centos:7 AS dependencies-stage
+FROM centos:8 AS dependencies-stage
 ENV TINI_VERSION v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini.asc /tini.asc
@@ -10,7 +10,7 @@ RUN ( \
     ) && gpg --batch --verify /tini.asc /tini \
     && chmod +x /tini
 
-FROM centos:7 AS build-stage
+FROM centos:8 AS build-stage
 LABEL maintainer="fabien.zarifian@nuevolia.fr"
 ENV X2GO_ADMIN_USER admin
 
